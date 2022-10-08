@@ -1,15 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
-    "lib": ["es6"],
+    "outDir": "./build",
     "module": "commonjs",
-    "rootDir": "src",
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "outDir": "build",
+    "target": "ES2021",
     "esModuleInterop": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "skipLibCheck": true
+    "strictNullChecks": true,
+    "allowJs": true
   }
 }
