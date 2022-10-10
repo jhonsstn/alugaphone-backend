@@ -86,4 +86,14 @@ describe('AddAccount', () => {
       password: 'encrypted_password',
     });
   });
+
+  it('should throw if AddAccountRepository throws', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut();
+    jest
+      .spyOn(addAccountRepositoryStub, 'add')
+      .mockRejectedValueOnce(new Error());
+    const accountData = makeFakeAccountData();
+    const promise = sut.add(accountData);
+    await expect(promise).rejects.toThrow();
+  });
 });
