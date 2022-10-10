@@ -96,4 +96,12 @@ describe('AddAccount', () => {
     const promise = sut.add(accountData);
     await expect(promise).rejects.toThrow();
   });
+
+  it('should return an account on success', async () => {
+    const { sut } = makeSut();
+    const accountData = makeFakeAccountData();
+    const account = await sut.add(accountData);
+    const { password, ...accountWithoutPassword } = makeFakeAccount();
+    expect(account).toEqual(accountWithoutPassword);
+  });
 });
