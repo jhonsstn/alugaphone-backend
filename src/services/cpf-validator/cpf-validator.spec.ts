@@ -22,4 +22,11 @@ describe('CPFValidatorAdapter', () => {
     const isCPFValid = sut.isValid('valid_cpf');
     expect(isCPFValid).toBeTruthy();
   });
+
+  it('should call validator with correct cpf', () => {
+    const sut = new CPFValidatorAdapter();
+    const isValidSpy = jest.spyOn(cpf, 'isValid');
+    sut.isValid('any_cpf');
+    expect(isValidSpy).toHaveBeenCalledWith('any_cpf');
+  });
 });
