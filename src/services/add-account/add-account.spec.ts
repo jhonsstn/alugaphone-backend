@@ -49,4 +49,12 @@ describe('AddAccount', () => {
     sut.add(accountData);
     expect(encryptSpy).toHaveBeenCalledWith(accountData.password);
   });
+
+  it('should throw if Encrypter throws', async () => {
+    const { sut, encrypterStub } = makeSut();
+    jest.spyOn(encrypterStub, 'encrypt').mockRejectedValueOnce(new Error());
+    const accountData = makeFakeAccountData();
+    const promise = sut.add(accountData);
+    await expect(promise).rejects.toThrow();
+  });
 });
