@@ -1,8 +1,9 @@
+import AddAccount from '../../services/add-account/add-account-interface';
 import CPFValidator from '../../services/cpf-validator/cpf-validator-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
 import InvalidParamError from '../errors/invalid-param-error';
 import MissingParamError from '../errors/missing-param-error';
-import { badRequest, serverError } from '../helpers/http';
+import { badRequest, serverError, success } from '../helpers/http';
 import Controller from '../interfaces/controller';
 import { HttpRequest } from '../interfaces/http';
 
@@ -10,9 +11,9 @@ export default class SignUpController implements Controller {
   constructor(
     private readonly emailValidator: EmailValidator,
     private readonly cpfValidator: CPFValidator,
+    private readonly addAccount: AddAccount,
   ) {}
 
-  // eslint-disable-next-line class-methods-use-this, consistent-return
   async handle(httpRequest: HttpRequest): Promise<any> {
     try {
       const requiredFields = ['name', 'email', 'document', 'password'];
@@ -32,6 +33,10 @@ export default class SignUpController implements Controller {
       if (!isCPFValid) {
         return badRequest(new InvalidParamError('document'));
       }
+
+      const account = await this.addAccount.add(httpRequest.body);
+
+      return success(account);
     } catch (error) {
       return serverError(error);
     }
