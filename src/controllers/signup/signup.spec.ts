@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-import { cpf } from 'cpf-cnpj-validator';
 import { AccountModel } from '../../models/account';
 import AddAccount, {
   AddAccountModel,
@@ -8,22 +6,25 @@ import CPFValidator from '../../services/cpf-validator/cpf-validator-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
 import InvalidParamError from '../errors/invalid-param-error';
 import MissingParamError from '../errors/missing-param-error';
+import { success } from '../helpers/http';
+import { HttpRequest } from '../interfaces/http';
 import SignUpController from './signup';
 
-type Account = {
-  name: string;
-  email: string;
-  document: string;
-  password: string;
-};
+const makeFakeRequest = (): HttpRequest => ({
+  body: {
+    name: 'any_name',
+    email: 'any_email@mail.com',
+    document: 'any_document',
+    password: 'any_password',
+  },
+});
 
-const randomAccount: Account = {
-  name: faker.name.fullName(),
-  email: faker.internet.email(),
-  document: String(cpf.generate()),
-  password: faker.internet.password(8),
-};
-const RANDOM_ID = faker.datatype.uuid();
+const makeFakeAccount = (): Omit<AccountModel, 'password'> => ({
+  id: 'valid_id',
+  name: 'valid_name',
+  email: 'valid_email@mail.com',
+  document: 'valid_document',
+});
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -45,8 +46,10 @@ const makeCPFValidator = (): CPFValidator => {
 
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
-    async add(_account: AddAccountModel): Promise<AccountModel> {
-      return Promise.resolve({ ...randomAccount, id: RANDOM_ID });
+    async add(
+      _account: AddAccountModel,
+    ): Promise<Omit<AccountModel, 'password'>> {
+      return Promise.resolve(makeFakeAccount());
     }
   }
   return new AddAccountStub();
@@ -81,10 +84,9 @@ describe('SignUp Controller', () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-        passwordConfirmation: randomAccount.password,
+        email: 'any_email@mail.com',
+        document: 'any_document',
+        password: 'any_password',
       },
     };
     const httpResponse = await sut.handle(httpRequest);
@@ -95,9 +97,9 @@ describe('SignUp Controller', () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
-        name: randomAccount.name,
-        document: randomAccount.document,
-        password: randomAccount.password,
+        name: 'any_name',
+        document: 'any_document',
+        password: 'any_password',
       },
     };
     const httpResponse = await sut.handle(httpRequest);
@@ -108,9 +110,9 @@ describe('SignUp Controller', () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        password: randomAccount.password,
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        password: 'any_password',
       },
     };
     const httpResponse = await sut.handle(httpRequest);
@@ -121,9 +123,9 @@ describe('SignUp Controller', () => {
     const { sut } = makeSut();
     const httpRequest = {
       body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        document: 'any_document',
       },
     };
     const httpResponse = await sut.handle(httpRequest);
@@ -133,14 +135,7 @@ describe('SignUp Controller', () => {
   it('should return 400 if an invalid email is provided', async () => {
     const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false);
-    const httpRequest = {
-      body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-      },
-    };
+    const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse.body).toEqual(new InvalidParamError('email'));
   });
@@ -148,16 +143,9 @@ describe('SignUp Controller', () => {
   it('should call EmailValidator with correct email', async () => {
     const { sut, emailValidatorStub } = makeSut();
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid');
-    const httpRequest = {
-      body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-      },
-    };
+    const httpRequest = makeFakeRequest();
     await sut.handle(httpRequest);
-    expect(isValidSpy).toHaveBeenCalledWith(randomAccount.email);
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
   });
 
   it('should return 500 if EmailValidator throws', async () => {
@@ -165,14 +153,7 @@ describe('SignUp Controller', () => {
     jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
       throw new Error();
     });
-    const httpRequest = {
-      body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-      },
-    };
+    const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
   });
@@ -180,14 +161,7 @@ describe('SignUp Controller', () => {
   it('should return 400 if an invalid cpf is provided', async () => {
     const { sut, cpfValidatorStub } = makeSut();
     jest.spyOn(cpfValidatorStub, 'isValid').mockReturnValueOnce(false);
-    const httpRequest = {
-      body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-      },
-    };
+    const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse.body).toEqual(new InvalidParamError('document'));
   });
@@ -195,16 +169,9 @@ describe('SignUp Controller', () => {
   it('should call CPFValidator with correct cpf', async () => {
     const { sut, cpfValidatorStub } = makeSut();
     const isValidSpy = jest.spyOn(cpfValidatorStub, 'isValid');
-    const httpRequest = {
-      body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-      },
-    };
+    const httpRequest = makeFakeRequest();
     await sut.handle(httpRequest);
-    expect(isValidSpy).toHaveBeenCalledWith(randomAccount.document);
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.document);
   });
 
   it('should return 500 if CPFValidator throws', async () => {
@@ -212,14 +179,7 @@ describe('SignUp Controller', () => {
     jest.spyOn(cpfValidatorStub, 'isValid').mockImplementationOnce(() => {
       throw new Error();
     });
-    const httpRequest = {
-      body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-      },
-    };
+    const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
   });
@@ -227,21 +187,9 @@ describe('SignUp Controller', () => {
   it('should call AddAccount with correct values', async () => {
     const { sut, addAccountStub } = makeSut();
     const addSpy = jest.spyOn(addAccountStub, 'add');
-    const httpRequest = {
-      body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-      },
-    };
+    const httpRequest = makeFakeRequest();
     await sut.handle(httpRequest);
-    expect(addSpy).toHaveBeenCalledWith({
-      name: randomAccount.name,
-      email: randomAccount.email,
-      document: randomAccount.document,
-      password: randomAccount.password,
-    });
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body);
   });
 
   it('should return 500 if AddAccount throws', async () => {
@@ -249,15 +197,15 @@ describe('SignUp Controller', () => {
     jest.spyOn(addAccountStub, 'add').mockImplementationOnce(() => {
       throw new Error();
     });
-    const httpRequest = {
-      body: {
-        name: randomAccount.name,
-        email: randomAccount.email,
-        document: randomAccount.document,
-        password: randomAccount.password,
-      },
-    };
+    const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
+  });
+
+  it('should return 200 if valid data is provided', async () => {
+    const { sut } = makeSut();
+    const httpRequest = makeFakeRequest();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(success(makeFakeAccount()));
   });
 });
