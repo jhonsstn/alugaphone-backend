@@ -15,7 +15,7 @@ describe('Account Mongo Repository', () => {
     await MongoHelper.disconnect();
   });
 
-  it('should return an account on success ', async () => {
+  it('should return an account on success', async () => {
     const sut = new AddAccountMongoRepository();
     const account = await sut.add({
       name: 'any_name',
