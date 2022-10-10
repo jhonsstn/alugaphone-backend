@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import EmailValidator from '../../services/email-validator/email-validator-interface';
 import MissingParamError from '../errors/missing-param-error';
 import SignUpController from './signup';
 
@@ -10,15 +11,35 @@ type Account = {
 };
 
 const randomAccount: Account = {
-  name: faker.name.firstName(),
+  name: faker.name.fullName(),
   email: faker.internet.email(),
   document: faker.random.numeric(11),
   password: faker.internet.password(8),
 };
 
+const makeEmailValidator = (): EmailValidator => {
+  class EmailValidatorStub implements EmailValidator {
+    isValid(_email: string): boolean {
+      return true;
+    }
+  }
+  return new EmailValidatorStub();
+};
+
+type SutTypes = {
+  sut: SignUpController;
+  emailValidatorStub: EmailValidator;
+};
+
+const makeSut = (): SutTypes => {
+  const emailValidatorStub = makeEmailValidator();
+  const sut = new SignUpController(emailValidatorStub);
+  return { sut, emailValidatorStub };
+};
+
 describe('SignUp Controller', () => {
   it('should return 400 if no name is provided', async () => {
-    const sut = new SignUpController();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
         email: randomAccount.email,
@@ -32,7 +53,7 @@ describe('SignUp Controller', () => {
   });
 
   it('should return 400 if no email is provided', async () => {
-    const sut = new SignUpController();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
         name: randomAccount.name,
@@ -45,7 +66,7 @@ describe('SignUp Controller', () => {
   });
 
   it('should return 400 if no document is provided', async () => {
-    const sut = new SignUpController();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
         name: randomAccount.name,
@@ -58,7 +79,7 @@ describe('SignUp Controller', () => {
   });
 
   it('should return 400 if no password is provided', async () => {
-    const sut = new SignUpController();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
         name: randomAccount.name,
