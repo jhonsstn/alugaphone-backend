@@ -170,4 +170,20 @@ describe('SignUp Controller', () => {
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse.body).toEqual(new InvalidParamError('document'));
   });
+
+  it('should call CPFValidator with correct cpf', async () => {
+    const { sut, cpfValidatorStub } = makeSut();
+    const isValidSpy = jest.spyOn(cpfValidatorStub, 'isValid');
+    const httpRequest = {
+      body: {
+        name: randomAccount.name,
+        email: randomAccount.email,
+        document: randomAccount.document,
+        password: randomAccount.password,
+        passwordConfirmation: randomAccount.password,
+      },
+    };
+    await sut.handle(httpRequest);
+    expect(isValidSpy).toHaveBeenCalledWith(randomAccount.document);
+  });
 });
