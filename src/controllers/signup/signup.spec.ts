@@ -123,4 +123,22 @@ describe('SignUp Controller', () => {
     await sut.handle(httpRequest);
     expect(isValidSpy).toHaveBeenCalledWith(randomAccount.email);
   });
+
+  it('should return 500 if EmailValidator throws', async () => {
+    const { sut, emailValidatorStub } = makeSut();
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const httpRequest = {
+      body: {
+        name: randomAccount.name,
+        email: randomAccount.email,
+        document: randomAccount.document,
+        password: randomAccount.password,
+        passwordConfirmation: randomAccount.password,
+      },
+    };
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+  });
 });
