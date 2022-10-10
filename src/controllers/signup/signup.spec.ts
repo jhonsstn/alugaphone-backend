@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
+import InvalidParamError from '../errors/invalid-param-error';
 import MissingParamError from '../errors/missing-param-error';
 import SignUpController from './signup';
 
@@ -89,5 +90,21 @@ describe('SignUp Controller', () => {
     };
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse.body).toEqual(new MissingParamError('password'));
+  });
+
+  it('should return 400 if an invalid email is provided', async () => {
+    const { sut, emailValidatorStub } = makeSut();
+    jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false);
+    const httpRequest = {
+      body: {
+        name: randomAccount.name,
+        email: randomAccount.email,
+        document: randomAccount.document,
+        password: randomAccount.password,
+        passwordConfirmation: randomAccount.password,
+      },
+    };
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse.body).toEqual(new InvalidParamError('email'));
   });
 });
