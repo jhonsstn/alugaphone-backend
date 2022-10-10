@@ -1,5 +1,5 @@
 import { AccountModel } from '../../models/account';
-import AddAccountRepository from '../../repositories/interfaces/add-account-repository';
+import AddAccountRepository from '../../repositories/add-account-repository';
 import Encrypter from '../encrypter/encrypter-interface';
 import AddAccount, { AddAccountModel } from './add-account-interface';
 

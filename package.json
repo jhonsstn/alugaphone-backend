@@ -19,6 +19,7 @@
   "license": "ISC",
   "devDependencies": {
     "@faker-js/faker": "^7.5.0",
+    "@shelf/jest-mongodb": "^4.1.0",
     "@types/jest": "^29.1.2",
     "@types/node": "^18.8.3",
     "@types/validator": "^13.7.7",
@@ -38,6 +39,7 @@
   },
   "dependencies": {
     "cpf-cnpj-validator": "^1.0.3",
+    "mongodb": "^4.10.0",
     "validator": "^13.7.0"
   }
 }
