@@ -1,5 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { cpf } from 'cpf-cnpj-validator';
+import { AccountModel } from '../../models/account';
+import AddAccount, {
+  AddAccountModel,
+} from '../../services/add-account/add-account-interface';
 import CPFValidator from '../../services/cpf-validator/cpf-validator-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
 import InvalidParamError from '../errors/invalid-param-error';
@@ -19,6 +23,7 @@ const randomAccount: Account = {
   document: String(cpf.generate()),
   password: faker.internet.password(8),
 };
+const RANDOM_ID = faker.datatype.uuid();
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -38,17 +43,37 @@ const makeCPFValidator = (): CPFValidator => {
   return new CPFValidatorStub();
 };
 
+const makeAddAccount = (): AddAccount => {
+  class AddAccountStub implements AddAccount {
+    async add(_account: AddAccountModel): Promise<AccountModel> {
+      return Promise.resolve({ ...randomAccount, id: RANDOM_ID });
+    }
+  }
+  return new AddAccountStub();
+};
+
 type SutTypes = {
   sut: SignUpController;
   emailValidatorStub: EmailValidator;
   cpfValidatorStub: CPFValidator;
+  addAccountStub: AddAccount;
 };
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator();
   const cpfValidatorStub = makeCPFValidator();
-  const sut = new SignUpController(emailValidatorStub, cpfValidatorStub);
-  return { sut, emailValidatorStub, cpfValidatorStub };
+  const addAccountStub = makeAddAccount();
+  const sut = new SignUpController(
+    emailValidatorStub,
+    cpfValidatorStub,
+    addAccountStub,
+  );
+  return {
+    sut,
+    emailValidatorStub,
+    cpfValidatorStub,
+    addAccountStub,
+  };
 };
 
 describe('SignUp Controller', () => {
@@ -114,7 +139,6 @@ describe('SignUp Controller', () => {
         email: randomAccount.email,
         document: randomAccount.document,
         password: randomAccount.password,
-        passwordConfirmation: randomAccount.password,
       },
     };
     const httpResponse = await sut.handle(httpRequest);
@@ -130,7 +154,6 @@ describe('SignUp Controller', () => {
         email: randomAccount.email,
         document: randomAccount.document,
         password: randomAccount.password,
-        passwordConfirmation: randomAccount.password,
       },
     };
     await sut.handle(httpRequest);
@@ -148,7 +171,6 @@ describe('SignUp Controller', () => {
         email: randomAccount.email,
         document: randomAccount.document,
         password: randomAccount.password,
-        passwordConfirmation: randomAccount.password,
       },
     };
     const httpResponse = await sut.handle(httpRequest);
@@ -164,7 +186,6 @@ describe('SignUp Controller', () => {
         email: randomAccount.email,
         document: randomAccount.document,
         password: randomAccount.password,
-        passwordConfirmation: randomAccount.password,
       },
     };
     const httpResponse = await sut.handle(httpRequest);
@@ -180,7 +201,6 @@ describe('SignUp Controller', () => {
         email: randomAccount.email,
         document: randomAccount.document,
         password: randomAccount.password,
-        passwordConfirmation: randomAccount.password,
       },
     };
     await sut.handle(httpRequest);
@@ -198,7 +218,43 @@ describe('SignUp Controller', () => {
         email: randomAccount.email,
         document: randomAccount.document,
         password: randomAccount.password,
-        passwordConfirmation: randomAccount.password,
+      },
+    };
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+  });
+
+  it('should call AddAccount with correct values', async () => {
+    const { sut, addAccountStub } = makeSut();
+    const addSpy = jest.spyOn(addAccountStub, 'add');
+    const httpRequest = {
+      body: {
+        name: randomAccount.name,
+        email: randomAccount.email,
+        document: randomAccount.document,
+        password: randomAccount.password,
+      },
+    };
+    await sut.handle(httpRequest);
+    expect(addSpy).toHaveBeenCalledWith({
+      name: randomAccount.name,
+      email: randomAccount.email,
+      document: randomAccount.document,
+      password: randomAccount.password,
+    });
+  });
+
+  it('should return 500 if AddAccount throws', async () => {
+    const { sut, addAccountStub } = makeSut();
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const httpRequest = {
+      body: {
+        name: randomAccount.name,
+        email: randomAccount.email,
+        document: randomAccount.document,
+        password: randomAccount.password,
       },
     };
     const httpResponse = await sut.handle(httpRequest);
