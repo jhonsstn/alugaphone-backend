@@ -5,7 +5,7 @@ import InvalidParamError from '../errors/invalid-param-error';
 import MissingParamError from '../errors/missing-param-error';
 import { badRequest, serverError, success } from '../helpers/http';
 import Controller from '../interfaces/controller';
-import { HttpRequest } from '../interfaces/http';
+import { HttpRequest, HttpResponse } from '../interfaces/http';
 
 export default class SignUpController implements Controller {
   constructor(
@@ -14,7 +14,7 @@ export default class SignUpController implements Controller {
     private readonly addAccount: AddAccount,
   ) {}
 
-  async handle(httpRequest: HttpRequest): Promise<any> {
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const requiredFields = ['name', 'email', 'document', 'password'];
       for (let index = 0; index < requiredFields.length; index += 1) {
