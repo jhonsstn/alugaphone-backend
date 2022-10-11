@@ -102,4 +102,11 @@ describe('Authentication', () => {
     const account = await sut.auth(makeFakeLoginData());
     expect(account).toBeNull();
   });
+
+  it('should throw if HashComparer throws', async () => {
+    const { sut, hashComparerStub } = makeSut();
+    jest.spyOn(hashComparerStub, 'compare').mockRejectedValueOnce(new Error());
+    const promise = sut.auth(makeFakeLoginData());
+    await expect(promise).rejects.toThrow();
+  });
 });
