@@ -1,5 +1,6 @@
 import { AccountModel } from '../../models/account';
 import GetAccountByEmailRepository from '../../repositories/get-account-by-email-repository';
+import HashComparer from '../hash-comparer/hash-comparer-interface';
 import Authentication from './authentication';
 import { AuthenticationParams } from './authentication-interface';
 
@@ -25,17 +26,32 @@ const makeGetAccountByEmailRepository = (): GetAccountByEmailRepository => {
   return new GetAccountByEmailRepositoryStub();
 };
 
+const makeHashComparer = (): HashComparer => {
+  class HashComparerStub implements HashComparer {
+    async compare(_password: string, _hash: string): Promise<boolean> {
+      return Promise.resolve(true);
+    }
+  }
+  return new HashComparerStub();
+};
+
 interface SutTypes {
   sut: Authentication;
   getAccountByEmailRepositoryStub: GetAccountByEmailRepository;
+  hashComparerStub: HashComparer;
 }
 
 const makeSut = (): SutTypes => {
   const getAccountByEmailRepositoryStub = makeGetAccountByEmailRepository();
-  const sut = new Authentication(getAccountByEmailRepositoryStub);
+  const hashComparerStub = makeHashComparer();
+  const sut = new Authentication(
+    getAccountByEmailRepositoryStub,
+    hashComparerStub,
+  );
   return {
     sut,
     getAccountByEmailRepositoryStub,
+    hashComparerStub,
   };
 };
 
@@ -68,5 +84,15 @@ describe('Authentication', () => {
       .mockRejectedValueOnce(new Error());
     const promise = sut.auth(makeFakeLoginData());
     await expect(promise).rejects.toThrow();
+  });
+
+  it('should call HashComparer with correct values', async () => {
+    const { sut, hashComparerStub } = makeSut();
+    const compareSpy = jest.spyOn(hashComparerStub, 'compare');
+    await sut.auth(makeFakeLoginData());
+    expect(compareSpy).toHaveBeenCalledWith(
+      makeFakeLoginData().password,
+      makeFakeAccount().password,
+    );
   });
 });
