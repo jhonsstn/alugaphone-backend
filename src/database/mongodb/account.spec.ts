@@ -37,18 +37,8 @@ describe('Account Mongo Repository', () => {
 
   it('should return an account on account creation success', async () => {
     const sut = new AccountMongoRepository();
-    const account = await sut.add({
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      document: 'any_document',
-      password: 'any_password',
-    });
-    expect(account).toEqual({
-      id: expect.any(String),
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      document: 'any_document',
-    });
+    const account = await sut.add(makeFakeUserData());
+    expect(account).toEqual(makeFakeAccountData());
   });
 
   it('should return an account on getting an account by email success', async () => {

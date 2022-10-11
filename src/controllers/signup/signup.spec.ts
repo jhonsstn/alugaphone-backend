@@ -19,11 +19,12 @@ const makeFakeRequest = (): HttpRequest => ({
   },
 });
 
-const makeFakeAccount = (): Omit<AccountModel, 'password'> => ({
+const makeFakeAccount = (): AccountModel => ({
   id: 'valid_id',
   name: 'valid_name',
   email: 'valid_email@mail.com',
   document: 'valid_document',
+  password: 'encrypted_password',
 });
 
 const makeEmailValidator = (): EmailValidator => {
@@ -46,9 +47,7 @@ const makeCPFValidator = (): CPFValidator => {
 
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
-    async add(
-      _account: AddAccountModel,
-    ): Promise<Omit<AccountModel, 'password'>> {
+    async add(_account: AddAccountModel): Promise<AccountModel> {
       return Promise.resolve(makeFakeAccount());
     }
   }

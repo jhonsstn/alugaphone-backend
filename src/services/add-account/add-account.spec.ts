@@ -30,11 +30,8 @@ const makeEncrypter = (): Hasher => {
 
 const makeAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepositoryStub implements AddAccountRepository {
-    async add(
-      _account: AddAccountModel,
-    ): Promise<Omit<AccountModel, 'password'>> {
-      const { password, ...accountWithoutPassword } = makeFakeAccount();
-      return Promise.resolve(accountWithoutPassword);
+    async add(_account: AddAccountModel): Promise<AccountModel> {
+      return Promise.resolve(makeFakeAccount());
     }
   }
   return new AddAccountRepositoryStub();

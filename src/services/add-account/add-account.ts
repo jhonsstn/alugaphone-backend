@@ -15,6 +15,7 @@ export default class DbAddAccount implements AddAccount {
       ...account,
       password: encryptedPassword,
     });
-    return newAccount;
+    const { password, ...newAccountWithoutPassword } = newAccount;
+    return newAccountWithoutPassword;
   }
 }

@@ -6,13 +6,10 @@ import MongoHelper from '../helpers/mongo-helper';
 
 export default class AccountMongoRepository
 implements AddAccountRepository, GetAccountByEmailRepository {
-  async add(
-    accountData: AddAccountModel,
-  ): Promise<Omit<AccountModel, 'password'>> {
+  async add(accountData: AddAccountModel): Promise<AccountModel> {
     const accountCollection = MongoHelper.getCollection('accounts');
     await accountCollection.insertOne(accountData);
-    const { password, ...accountWithoutId } = accountData;
-    return MongoHelper.mapId(accountWithoutId);
+    return MongoHelper.mapId(accountData);
   }
 
   async getAccountByEmail(email: string): Promise<AccountModel | null> {
