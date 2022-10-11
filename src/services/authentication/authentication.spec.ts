@@ -95,4 +95,11 @@ describe('Authentication', () => {
       makeFakeAccount().password,
     );
   });
+
+  it('should return null if HashComparer returns false', async () => {
+    const { sut, hashComparerStub } = makeSut();
+    jest.spyOn(hashComparerStub, 'compare').mockResolvedValueOnce(false);
+    const account = await sut.auth(makeFakeLoginData());
+    expect(account).toBeNull();
+  });
 });
