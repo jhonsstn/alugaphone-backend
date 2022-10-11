@@ -1,5 +1,5 @@
 import GetAccountByEmailRepository from '../../repositories/get-account-by-email-repository';
-import HashComparer from '../hash-comparer/hash-comparer-interface';
+import HashComparer from '../bcrypt/hash-comparer-interface';
 import { AuthenticationParams } from './authentication-interface';
 
 export default class Authentication implements Authentication {

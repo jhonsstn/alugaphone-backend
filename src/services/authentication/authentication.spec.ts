@@ -1,6 +1,6 @@
 import { AccountModel } from '../../models/account';
 import GetAccountByEmailRepository from '../../repositories/get-account-by-email-repository';
-import HashComparer from '../hash-comparer/hash-comparer-interface';
+import HashComparer from '../bcrypt/hash-comparer-interface';
 import Authentication from './authentication';
 import { AuthenticationParams } from './authentication-interface';
 

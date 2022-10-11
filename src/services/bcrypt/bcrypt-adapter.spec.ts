@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import BcryptAdapter from './encrypter';
+import BcryptAdapter from './bcrypt-adapter';
 
 const SALT = 12;
 
@@ -9,7 +9,7 @@ jest.mock('bcrypt', () => ({
   },
 }));
 
-describe('Encrypter', () => {
+describe('Hasher', () => {
   it('should return a encrypted password', async () => {
     const sut = new BcryptAdapter(SALT);
     const hashSpy = jest.spyOn(bcrypt, 'hash');

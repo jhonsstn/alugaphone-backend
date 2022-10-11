@@ -1,6 +1,6 @@
 import { AccountModel } from '../../models/account';
 import AddAccountRepository from '../../repositories/add-account-repository';
-import Encrypter from '../encrypter/encrypter-interface';
+import Hasher from '../bcrypt/hasher-interface';
 import DbAddAccount from './add-account';
 import { AddAccountModel } from './add-account-interface';
 
@@ -19,8 +19,8 @@ const makeFakeAccountData = (): AddAccountModel => ({
   password: 'valid_password',
 });
 
-const makeEncrypter = (): Encrypter => {
-  class EncrypterStub implements Encrypter {
+const makeEncrypter = (): Hasher => {
+  class EncrypterStub implements Hasher {
     encrypt(_password: string): Promise<string> {
       return Promise.resolve('encrypted_password');
     }
@@ -42,7 +42,7 @@ const makeAddAccountRepository = (): AddAccountRepository => {
 
 interface SutTypes {
   sut: DbAddAccount;
-  encrypterStub: Encrypter;
+  encrypterStub: Hasher;
   addAccountRepositoryStub: AddAccountRepository;
 }
 
@@ -58,7 +58,7 @@ const makeSut = (): SutTypes => {
 };
 
 describe('AddAccount', () => {
-  it('should call Encrypter with correct password', () => {
+  it('should call Hasher with correct password', () => {
     const { sut, encrypterStub } = makeSut();
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt');
     const accountData = makeFakeAccountData();
@@ -66,7 +66,7 @@ describe('AddAccount', () => {
     expect(encryptSpy).toHaveBeenCalledWith(accountData.password);
   });
 
-  it('should throw if Encrypter throws', async () => {
+  it('should throw if Hasher throws', async () => {
     const { sut, encrypterStub } = makeSut();
     jest.spyOn(encrypterStub, 'encrypt').mockRejectedValueOnce(new Error());
     const accountData = makeFakeAccountData();

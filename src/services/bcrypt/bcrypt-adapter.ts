@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
-import Encrypter from './encrypter-interface';
+import Hasher from './hasher-interface';
 
-export default class BcryptAdapter implements Encrypter {
+export default class BcryptAdapter implements Hasher {
   constructor(private readonly salt: number) {}
 
   async encrypt(password: string): Promise<string> {
