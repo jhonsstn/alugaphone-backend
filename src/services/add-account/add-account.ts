@@ -6,12 +6,12 @@ import AddAccount, { AddAccountModel } from './add-account-interface';
 export default class DbAddAccount implements AddAccount {
   constructor(
     private readonly encrypter: Hasher,
-    private readonly addAccountRepository: AddAccountRepository,
+    private readonly accountRepository: AddAccountRepository,
   ) {}
 
   async add(account: AddAccountModel): Promise<Omit<AccountModel, 'password'>> {
     const encryptedPassword = await this.encrypter.encrypt(account.password);
-    const newAccount = await this.addAccountRepository.add({
+    const newAccount = await this.accountRepository.add({
       ...account,
       password: encryptedPassword,
     });
