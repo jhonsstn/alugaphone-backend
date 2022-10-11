@@ -16,7 +16,7 @@ describe('BcryptAdapter', () => {
   it('should return a encrypted password', async () => {
     const sut = new BcryptAdapter(SALT);
     const hashSpy = jest.spyOn(bcrypt, 'hash');
-    const password = await sut.encrypt('any_password');
+    await sut.encrypt('any_password');
     expect(hashSpy).toHaveBeenCalledWith('any_password', SALT);
   });
 
@@ -39,5 +39,12 @@ describe('BcryptAdapter', () => {
     const sut = new BcryptAdapter(SALT);
     const isValid = await sut.compare('any_password', 'any_hash');
     expect(isValid).toBeTruthy();
+  });
+
+  it('should return false if compare fails', async () => {
+    const sut = new BcryptAdapter(SALT);
+    jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => false);
+    const isValid = await sut.compare('any_password', 'any_hash');
+    expect(isValid).toBeFalsy();
   });
 });
