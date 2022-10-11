@@ -60,4 +60,13 @@ describe('Authentication', () => {
     const account = await sut.auth(makeFakeLoginData());
     expect(account).toBeNull();
   });
+
+  it('should throw if GetAccountByEmailRepository throws', async () => {
+    const { sut, getAccountByEmailRepositoryStub } = makeSut();
+    jest
+      .spyOn(getAccountByEmailRepositoryStub, 'getAccountByEmail')
+      .mockRejectedValueOnce(new Error());
+    const promise = sut.auth(makeFakeLoginData());
+    await expect(promise).rejects.toThrow();
+  });
 });
