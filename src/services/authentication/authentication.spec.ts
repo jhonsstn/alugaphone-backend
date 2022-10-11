@@ -136,4 +136,11 @@ describe('Authentication', () => {
       email: makeFakeAccount().email,
     });
   });
+
+  it('should throw if Encrypter throws', async () => {
+    const { sut, encrypterStub } = makeSut();
+    jest.spyOn(encrypterStub, 'encrypt').mockRejectedValueOnce(new Error());
+    const promise = sut.auth(makeFakeLoginData());
+    await expect(promise).rejects.toThrow();
+  });
 });
