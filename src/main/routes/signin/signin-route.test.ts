@@ -1,7 +1,10 @@
 import { cpf } from 'cpf-cnpj-validator';
+import { Collection } from 'mongodb';
 import request from 'supertest';
-import MongoHelper from '../../database/helpers/mongo-helper';
-import app from '../config/app';
+import MongoHelper from '../../../database/helpers/mongo-helper';
+import app from '../../config/app';
+
+let accountCollection: Collection;
 
 describe('SignUp Routes', () => {
   beforeAll(async () => {
@@ -9,7 +12,7 @@ describe('SignUp Routes', () => {
   });
 
   beforeEach(async () => {
-    const accountCollection = MongoHelper.getCollection('accounts');
+    accountCollection = MongoHelper.getCollection('accounts');
     await accountCollection.deleteMany({});
   });
 
@@ -17,13 +20,21 @@ describe('SignUp Routes', () => {
     await MongoHelper.disconnect();
   });
 
-  test('should return an account on success', async () => {
+  it('should return an account on success', async () => {
     await request(app)
       .post('/api/accounts/signup')
       .send({
         name: 'any_name',
         email: 'any_email@mail.com',
         document: cpf.generate(),
+        password: 'any_password',
+      })
+      .expect(200);
+
+    await request(app)
+      .post('/api/accounts/signin')
+      .send({
+        email: 'any_email@mail.com',
         password: 'any_password',
       })
       .expect(200);
