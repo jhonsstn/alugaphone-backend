@@ -57,4 +57,10 @@ describe('Account Mongo Repository', () => {
     const account = await sut.getAccountByEmail('any_email@mail.com');
     expect(account).toEqual(makeFakeAccountData());
   });
+
+  it('should return null if getting an account by email fails', async () => {
+    const sut = new AccountMongoRepository();
+    const account = await sut.getAccountByEmail('any_email@mail.com');
+    expect(account).toBeNull();
+  });
 });
