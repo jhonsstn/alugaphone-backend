@@ -16,4 +16,10 @@ describe('Encrypter', () => {
     const password = await sut.encrypt('any_password');
     expect(hashSpy).toHaveBeenCalledWith('any_password', SALT);
   });
+
+  it('should return a encrypted password', async () => {
+    const sut = new BcryptAdapter(SALT);
+    const password = await sut.encrypt('any_password');
+    expect(password).toEqual('hash');
+  });
 });
