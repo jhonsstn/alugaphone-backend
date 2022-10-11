@@ -7,9 +7,12 @@ jest.mock('bcrypt', () => ({
   async hash(): Promise<string> {
     return Promise.resolve('hash');
   },
+  async compare(): Promise<boolean> {
+    return Promise.resolve(true);
+  },
 }));
 
-describe('Hasher', () => {
+describe('BcryptAdapter', () => {
   it('should return a encrypted password', async () => {
     const sut = new BcryptAdapter(SALT);
     const hashSpy = jest.spyOn(bcrypt, 'hash');
@@ -30,5 +33,11 @@ describe('Hasher', () => {
     });
     const promise = sut.encrypt('any_password');
     await expect(promise).rejects.toThrow();
+  });
+
+  it('should return true if compare succeeds', async () => {
+    const sut = new BcryptAdapter(SALT);
+    const isValid = await sut.compare('any_password', 'any_hash');
+    expect(isValid).toBeTruthy();
   });
 });
