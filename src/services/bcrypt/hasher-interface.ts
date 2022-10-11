@@ -1,3 +1,3 @@
 export default interface Hasher {
-  encrypt(password: string): Promise<string>;
+  encrypt(plaintext: string): Promise<string>;
 }

@@ -1,23 +1,37 @@
 import GetAccountByEmailRepository from '../../repositories/get-account-by-email-repository';
 import HashComparer from '../bcrypt/hash-comparer-interface';
-import { AuthenticationParams } from './authentication-interface';
+import { Encrypter } from '../jwt/jwt-encrypt-interface';
+import {
+  Authentication,
+  AuthenticationParams,
+  AuthenticationResult,
+} from './authentication-interface';
 
-export default class Authentication implements Authentication {
+export default class Authenticator implements Authentication {
   constructor(
     private readonly getAccountByEmailRepository: GetAccountByEmailRepository,
-    private readonly hashComparerStub: HashComparer,
+    private readonly hashComparer: HashComparer,
+    private readonly encrypter: Encrypter,
   ) {}
 
-  // TODO: change any return
-  async auth(authenticationParams: AuthenticationParams): Promise<any> {
+  async auth(
+    authenticationParams: AuthenticationParams,
+  ): Promise<AuthenticationResult | null> {
     const account = await this.getAccountByEmailRepository.getAccountByEmail(
       authenticationParams.email,
     );
     if (account) {
-      await this.hashComparerStub.compare(
+      const isValid = await this.hashComparer.compare(
         authenticationParams.password,
         account.password,
       );
+      if (isValid) {
+        const accessToken = await this.encrypter.encrypt({
+          id: account.id,
+          email: account.email,
+        });
+        return { accessToken };
+      }
     }
 
     return null;

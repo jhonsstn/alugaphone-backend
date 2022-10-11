@@ -1,4 +1,4 @@
-import Authentication from '../../services/authentication/authentication-interface';
+import { Authentication } from '../../services/authentication/authentication-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
 import InvalidParamError from '../errors/invalid-param-error';
 import MissingParamError from '../errors/missing-param-error';
@@ -36,7 +36,7 @@ export default class SignInController implements Controller {
       if (!accessToken) {
         return unauthorized();
       }
-      return success({ accessToken });
+      return success({ login: accessToken });
     } catch (error) {
       return serverError(error);
     }

@@ -3,6 +3,12 @@ export interface AuthenticationParams {
   password: string;
 }
 
-export default interface Authentication {
-  auth: (authenticationParams: AuthenticationParams) => Promise<string | null>;
+export interface AuthenticationResult {
+  accessToken: string;
+}
+
+export interface Authentication {
+  auth: (
+    authenticationParams: AuthenticationParams
+  ) => Promise<AuthenticationResult | null>;
 }
