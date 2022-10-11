@@ -1,8 +1,12 @@
 import { AccountModel } from '../../models/account';
 import GetAccountByEmailRepository from '../../repositories/get-account-by-email-repository';
 import HashComparer from '../bcrypt/hash-comparer-interface';
-import Authentication from './authentication';
-import { AuthenticationParams } from './authentication-interface';
+import { Encrypter, EncrypterParams } from '../jwt/jwt-encrypt-interface';
+import Authenticator from './authentication';
+import {
+  Authentication,
+  AuthenticationParams,
+} from './authentication-interface';
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'valid_id',
@@ -35,23 +39,36 @@ const makeHashComparer = (): HashComparer => {
   return new HashComparerStub();
 };
 
+const makeEncrypter = (): Encrypter => {
+  class EncrypterStub implements Encrypter {
+    async encrypt(_tokenData: EncrypterParams): Promise<string> {
+      return Promise.resolve('any_token');
+    }
+  }
+  return new EncrypterStub();
+};
+
 interface SutTypes {
   sut: Authentication;
   getAccountByEmailRepositoryStub: GetAccountByEmailRepository;
   hashComparerStub: HashComparer;
+  encrypterStub: Encrypter;
 }
 
 const makeSut = (): SutTypes => {
   const getAccountByEmailRepositoryStub = makeGetAccountByEmailRepository();
   const hashComparerStub = makeHashComparer();
-  const sut = new Authentication(
+  const encrypterStub = makeEncrypter();
+  const sut = new Authenticator(
     getAccountByEmailRepositoryStub,
     hashComparerStub,
+    encrypterStub,
   );
   return {
     sut,
     getAccountByEmailRepositoryStub,
     hashComparerStub,
+    encrypterStub,
   };
 };
 
@@ -108,5 +125,15 @@ describe('Authentication', () => {
     jest.spyOn(hashComparerStub, 'compare').mockRejectedValueOnce(new Error());
     const promise = sut.auth(makeFakeLoginData());
     await expect(promise).rejects.toThrow();
+  });
+
+  it('should call Encrypter with correct values', async () => {
+    const { sut, encrypterStub } = makeSut();
+    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt');
+    await sut.auth(makeFakeLoginData());
+    expect(encryptSpy).toHaveBeenCalledWith({
+      id: makeFakeAccount().id,
+      email: makeFakeAccount().email,
+    });
   });
 });
