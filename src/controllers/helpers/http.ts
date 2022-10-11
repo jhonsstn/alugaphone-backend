@@ -1,3 +1,4 @@
+import UnauthorizedError from '../errors/unauthorized-error';
 import { HttpResponse } from '../interfaces/http';
 
 export function badRequest(error: Error): HttpResponse {
@@ -18,5 +19,12 @@ export function success(data: any): HttpResponse {
   return {
     statusCode: 200,
     body: data,
+  };
+}
+
+export function unauthorized(): HttpResponse {
+  return {
+    statusCode: 401,
+    body: new UnauthorizedError(),
   };
 }
