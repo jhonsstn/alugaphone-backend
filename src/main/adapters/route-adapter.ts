@@ -5,7 +5,8 @@ const adaptSignUp = (controller: Controller) => async (req: any, res: any) => {
     body: req.body,
   };
   const httpResponse = await controller.handle(httpRequest);
-  res.status(httpResponse.statusCode).json(httpResponse.body);
+  const { statusCode, body } = httpResponse;
+  res.status(statusCode).json(body);
 };
 
 export default adaptSignUp;
