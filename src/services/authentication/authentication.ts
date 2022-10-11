@@ -8,8 +8,10 @@ export default class Authentication implements Authentication {
 
   // TODO: change any return
   async auth(authenticationParams: AuthenticationParams): Promise<any> {
-    this.getAccountByEmailRepository.getAccountByEmail(
+    await this.getAccountByEmailRepository.getAccountByEmail(
       authenticationParams.email,
     );
+
+    return null;
   }
 }
