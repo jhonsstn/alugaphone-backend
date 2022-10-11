@@ -18,7 +18,7 @@ const makeFakeLoginData = (): AuthenticationParams => ({
 
 const makeGetAccountByEmailRepository = (): GetAccountByEmailRepository => {
   class GetAccountByEmailRepositoryStub implements GetAccountByEmailRepository {
-    async getAccountByEmail(_email: string): Promise<any> {
+    async getAccountByEmail(_email: string): Promise<AccountModel | null> {
       return Promise.resolve(makeFakeAccount());
     }
   }
@@ -50,5 +50,14 @@ describe('Authentication', () => {
     expect(getAccountByEmailSpy).toHaveBeenCalledWith(
       makeFakeLoginData().email,
     );
+  });
+
+  it('should return null if GetAccountByEmailRepository returns null', async () => {
+    const { sut, getAccountByEmailRepositoryStub } = makeSut();
+    jest
+      .spyOn(getAccountByEmailRepositoryStub, 'getAccountByEmail')
+      .mockReturnValueOnce(Promise.resolve(null));
+    const account = await sut.auth(makeFakeLoginData());
+    expect(account).toBeNull();
   });
 });
