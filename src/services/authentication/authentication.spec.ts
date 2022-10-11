@@ -143,4 +143,12 @@ describe('Authentication', () => {
     const promise = sut.auth(makeFakeLoginData());
     await expect(promise).rejects.toThrow();
   });
+
+  it('should return an account on success', async () => {
+    const { sut } = makeSut();
+    const account = await sut.auth(makeFakeLoginData());
+    expect(account).toEqual({
+      accessToken: 'any_token',
+    });
+  });
 });
