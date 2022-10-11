@@ -4,7 +4,7 @@ import { HttpResponse } from '../interfaces/http';
 export function badRequest(error: Error): HttpResponse {
   return {
     statusCode: 400,
-    body: error,
+    body: { error: error.message },
   };
 }
 
