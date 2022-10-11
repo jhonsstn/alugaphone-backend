@@ -1,6 +1,6 @@
 import Controller from '../../controllers/interfaces/controller';
 import SignUpController from '../../controllers/signup/signup';
-import AddAccountMongoRepository from '../../database/mongodb-add-account';
+import AddAccountMongoRepository from '../../database/mongodb/account';
 import DbAddAccount from '../../services/add-account/add-account';
 import BcryptAdapter from '../../services/bcrypt/bcrypt-adapter';
 import CPFValidatorAdapter from '../../services/cpf-validator/cpf-validator';
