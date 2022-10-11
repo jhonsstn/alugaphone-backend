@@ -6,7 +6,7 @@ import CPFValidator from '../../services/cpf-validator/cpf-validator-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
 import InvalidParamError from '../errors/invalid-param-error';
 import MissingParamError from '../errors/missing-param-error';
-import { success } from '../helpers/http';
+import { badRequest, success } from '../helpers/http';
 import { HttpRequest } from '../interfaces/http';
 import SignUpController from './signup';
 
@@ -89,7 +89,7 @@ describe('SignUp Controller', () => {
       },
     };
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse.body).toEqual(new MissingParamError('name'));
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('name')));
   });
 
   it('should return 400 if no email is provided', async () => {
@@ -102,7 +102,7 @@ describe('SignUp Controller', () => {
       },
     };
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse.body).toEqual(new MissingParamError('email'));
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('email')));
   });
 
   it('should return 400 if no document is provided', async () => {
@@ -115,7 +115,7 @@ describe('SignUp Controller', () => {
       },
     };
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse.body).toEqual(new MissingParamError('document'));
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('document')));
   });
 
   it('should return 400 if no password is provided', async () => {
@@ -128,7 +128,7 @@ describe('SignUp Controller', () => {
       },
     };
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse.body).toEqual(new MissingParamError('password'));
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('password')));
   });
 
   it('should return 400 if an invalid email is provided', async () => {
@@ -136,7 +136,7 @@ describe('SignUp Controller', () => {
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false);
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse.body).toEqual(new InvalidParamError('email'));
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')));
   });
 
   it('should call EmailValidator with correct email', async () => {
@@ -162,7 +162,7 @@ describe('SignUp Controller', () => {
     jest.spyOn(cpfValidatorStub, 'isValid').mockReturnValueOnce(false);
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse.body).toEqual(new InvalidParamError('document'));
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('document')));
   });
 
   it('should call CPFValidator with correct cpf', async () => {
