@@ -147,8 +147,6 @@ describe('Authentication', () => {
   it('should return an account on success', async () => {
     const { sut } = makeSut();
     const account = await sut.auth(makeFakeLoginData());
-    expect(account).toEqual({
-      accessToken: 'any_token',
-    });
+    expect(account).toEqual('any_token');
   });
 });
