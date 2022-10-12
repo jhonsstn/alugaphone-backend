@@ -33,6 +33,10 @@ const makeEmailValidator = (): EmailValidator => {
     isValid(_email: string): boolean {
       return true;
     }
+
+    async checkIfAccountExists(_email: string): Promise<boolean> {
+      return Promise.resolve(false);
+    }
   }
   return new EmailValidatorStub();
 };
@@ -141,6 +145,8 @@ describe('Login Controller', () => {
     const { sut } = makeSut();
     const httpRequest: HttpRequest = makeFakeRequest();
     const httpResponse: HttpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(success({ login: { accessToken: 'any_token' } }));
+    expect(httpResponse).toEqual(
+      success({ login: { accessToken: 'any_token' } }),
+    );
   });
 });

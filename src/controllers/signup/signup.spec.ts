@@ -6,7 +6,7 @@ import CPFValidator from '../../services/cpf-validator/cpf-validator-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
 import InvalidParamError from '../errors/invalid-param-error';
 import MissingParamError from '../errors/missing-param-error';
-import { badRequest, success } from '../helpers/http';
+import { badRequest, conflict, success } from '../helpers/http';
 import { HttpRequest } from '../interfaces/http';
 import SignUpController from './signup';
 
@@ -31,6 +31,10 @@ const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
     isValid(_email: string): boolean {
       return true;
+    }
+
+    async checkIfAccountExists(_email: string): Promise<boolean> {
+      return Promise.resolve(false);
     }
   }
   return new EmailValidatorStub();
@@ -206,5 +210,33 @@ describe('SignUp Controller', () => {
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(success(makeFakeAccount()));
+  });
+
+  it('should return 409 if checkIfAccountExists returns true', async () => {
+    const { sut, emailValidatorStub } = makeSut();
+    jest
+      .spyOn(emailValidatorStub, 'checkIfAccountExists')
+      .mockResolvedValueOnce(true);
+    const httpRequest = makeFakeRequest();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(conflict());
+  });
+
+  it('should call checkIfAccountExists with correct email', async () => {
+    const { sut, emailValidatorStub } = makeSut();
+    const checkSpy = jest.spyOn(emailValidatorStub, 'checkIfAccountExists');
+    const httpRequest = makeFakeRequest();
+    await sut.handle(httpRequest);
+    expect(checkSpy).toHaveBeenCalledWith(httpRequest.body.email);
+  });
+
+  it('should return 500 if checkIfAccountExists throws', async () => {
+    const { sut, emailValidatorStub } = makeSut();
+    jest
+      .spyOn(emailValidatorStub, 'checkIfAccountExists')
+      .mockRejectedValueOnce(new Error());
+    const httpRequest = makeFakeRequest();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
   });
 });
