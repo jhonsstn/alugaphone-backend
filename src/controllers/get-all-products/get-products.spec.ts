@@ -24,7 +24,12 @@ const makeGetAllProducts = () => {
   return new GetAllProductsStub();
 };
 
-const makeSut = () => {
+interface SutTypes {
+  sut: GetProductsController;
+  getAllProductsStub: GetAllProducts;
+}
+
+const makeSut = (): SutTypes => {
   const getAllProductsStub = makeGetAllProducts();
   const sut = new GetProductsController(getAllProductsStub);
   return {
@@ -34,6 +39,13 @@ const makeSut = () => {
 };
 
 describe('GetAllProducts Controller', () => {
+  it('should call GetAllProducts', async () => {
+    const { sut, getAllProductsStub } = makeSut();
+    const getAllProductsSpy = jest.spyOn(getAllProductsStub, 'get');
+    await sut.handle();
+    expect(getAllProductsSpy).toHaveBeenCalled();
+  });
+
   it('should return an array of products on success', async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle();
