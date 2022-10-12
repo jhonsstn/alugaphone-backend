@@ -9,9 +9,9 @@ import JwtAdapter from '../../services/jwt/jwt-adapter';
 import env from '../config/env';
 
 export default function makeSignInController(): Controller {
-  const emailValidator = new EmailValidatorAdapter();
-  const hashComparer = new BcryptAdapter(+env.salt);
   const accountRepository = new AccountMongoRepository();
+  const emailValidator = new EmailValidatorAdapter(accountRepository);
+  const hashComparer = new BcryptAdapter(+env.salt);
   const encrypter = new JwtAdapter(env.secret);
   const authenticator = new Authenticator(
     accountRepository,

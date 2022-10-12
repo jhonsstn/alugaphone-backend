@@ -25,6 +25,6 @@ export function success(data: any): HttpResponse {
 export function unauthorized(): HttpResponse {
   return {
     statusCode: 401,
-    body: new UnauthorizedError(),
+    body: { error: new UnauthorizedError().message },
   };
 }
