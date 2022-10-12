@@ -9,10 +9,10 @@ import EmailValidatorAdapter from '../../services/email-validator/email-validato
 import env from '../config/env';
 
 export default function makeSignUpController(): Controller {
-  const emailValidator = new EmailValidatorAdapter();
+  const accountRepository = new AccountMongoRepository();
+  const emailValidator = new EmailValidatorAdapter(accountRepository);
   const cpfValidator = new CPFValidatorAdapter();
   const encrypter = new BcryptAdapter(+env.salt);
-  const accountRepository = new AccountMongoRepository();
   const addAccount = new DbAddAccount(encrypter, accountRepository);
   return new SignUpController(emailValidator, cpfValidator, addAccount);
 }
