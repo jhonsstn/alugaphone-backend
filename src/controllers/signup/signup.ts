@@ -3,7 +3,9 @@ import CPFValidator from '../../services/cpf-validator/cpf-validator-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
 import InvalidParamError from '../errors/invalid-param-error';
 import MissingParamError from '../errors/missing-param-error';
-import { badRequest, serverError, success } from '../helpers/http';
+import {
+  badRequest, conflict, serverError, success,
+} from '../helpers/http';
 import Controller from '../interfaces/controller';
 import { HttpRequest, HttpResponse } from '../interfaces/http';
 
@@ -24,6 +26,14 @@ export default class SignUpController implements Controller {
       }
 
       const { email, document } = httpRequest.body;
+
+      const emailAlreadyExists = await this.emailValidator.checkIfAccountExists(
+        email,
+      );
+      if (emailAlreadyExists) {
+        return conflict();
+      }
+
       const isEmailValid = this.emailValidator.isValid(email);
       if (!isEmailValid) {
         return badRequest(new InvalidParamError('email'));

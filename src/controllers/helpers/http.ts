@@ -1,3 +1,4 @@
+import EmailInUseError from '../errors/email-in-use-error';
 import UnauthorizedError from '../errors/unauthorized-error';
 import { HttpResponse } from '../interfaces/http';
 
@@ -26,5 +27,12 @@ export function unauthorized(): HttpResponse {
   return {
     statusCode: 401,
     body: { error: new UnauthorizedError().message },
+  };
+}
+
+export function conflict(): HttpResponse {
+  return {
+    statusCode: 409,
+    body: { error: new EmailInUseError().message },
   };
 }
