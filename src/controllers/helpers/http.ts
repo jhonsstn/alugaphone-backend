@@ -36,3 +36,10 @@ export function conflict(): HttpResponse {
     body: { error: new EmailInUseError().message },
   };
 }
+
+export function noContent(): HttpResponse {
+  return {
+    statusCode: 204,
+    body: null,
+  };
+}
