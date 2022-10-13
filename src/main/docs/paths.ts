@@ -1,3 +1,13 @@
-import { signInPath, signUpPath } from './paths/';
+import {
+  getProductByIdPath,
+  getProductsPath,
+  signInPath,
+  signUpPath,
+} from './paths/index';
 
-export default { '/signup': signUpPath, '/signin': signInPath };
+export default {
+  '/accounts/signup': signUpPath,
+  '/accounts/signin': signInPath,
+  '/products': getProductsPath,
+  '/products/{productId}': getProductByIdPath,
+};

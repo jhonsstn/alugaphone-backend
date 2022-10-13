@@ -11,7 +11,7 @@ export default {
   },
   servers: [
     {
-      url: 'http://localhost:3001/api/accounts',
+      url: 'http://localhost:3001/api',
       description: 'Development server',
     },
   ],

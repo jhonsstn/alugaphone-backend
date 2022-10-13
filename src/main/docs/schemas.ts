@@ -1,11 +1,17 @@
 import {
+  getProductByIdResponseSchema,
+  getProductsParamsSchema,
+  getProductsResponseSchema,
   signInParamsSchema,
   signInResponseSchema,
   signUpParamsSchema,
-} from './schemas/';
+} from './schemas/index';
 
 export default {
   signInResponseSchema,
   signInParamsSchema,
   signUpParamsSchema,
+  getProductsParamsSchema,
+  getProductsResponseSchema,
+  getProductByIdResponseSchema,
 };

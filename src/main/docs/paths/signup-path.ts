@@ -1,6 +1,6 @@
 export default {
   post: {
-    tags: ['SignUp'],
+    tags: ['Account'],
     summary: 'API to create a user',
     requestBody: {
       required: true,

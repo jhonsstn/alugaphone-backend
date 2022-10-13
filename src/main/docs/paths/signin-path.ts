@@ -1,6 +1,6 @@
 export default {
   post: {
-    tags: ['SignIn'],
+    tags: ['Account'],
     summary: 'API to authenticate a user',
     requestBody: {
       required: true,
