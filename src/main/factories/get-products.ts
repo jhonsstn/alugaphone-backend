@@ -1,10 +1,10 @@
-import GetProductsController from '../../controllers/get-all-products/get-products';
+import GetProductsController from '../../controllers/get-products/get-products';
 import Controller from '../../controllers/interfaces/controller';
 import ProductMongoRepository from '../../database/mongodb/product';
-import DbGetAllProducts from '../../services/get-all-products/get-all-products';
+import DbGetProducts from '../../services/get-products/get-products';
 
 export default function makeGetProductsController(): Controller {
   const productMongoRepository = new ProductMongoRepository();
-  const getAllProducts = new DbGetAllProducts(productMongoRepository);
-  return new GetProductsController(getAllProducts);
+  const getProducts = new DbGetProducts(productMongoRepository);
+  return new GetProductsController(getProducts);
 }

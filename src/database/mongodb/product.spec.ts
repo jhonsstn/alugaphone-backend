@@ -1,6 +1,4 @@
 import { Collection } from 'mongodb';
-import { AccountModel } from '../../models/account';
-import { AddAccountModel } from '../../services/add-account/add-account-interface';
 import MongoHelper from '../helpers/mongo-helper';
 import ProductMongoRepository from './product';
 
@@ -32,10 +30,10 @@ describe('Product Mongo Repository', () => {
     await MongoHelper.disconnect();
   });
 
-  it('should return an product on getAllProducts success', async () => {
+  it('should return an product on GetProducts success', async () => {
     const sut = new ProductMongoRepository();
     await accountCollection.insertOne(makeFakeProduct());
-    const products = await sut.getAllProducts();
+    const products = await sut.getProducts();
     expect(products).toEqual([makeFakeProduct()]);
   });
 });
