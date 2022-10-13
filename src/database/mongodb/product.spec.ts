@@ -2,7 +2,7 @@ import { Collection } from 'mongodb';
 import MongoHelper from '../helpers/mongo-helper';
 import ProductMongoRepository from './product';
 
-let accountCollection: Collection;
+let productsCollection: Collection;
 
 const makeFakeProduct = () => ({
   name: 'any_name',
@@ -21,8 +21,8 @@ describe('Product Mongo Repository', () => {
   });
 
   beforeEach(async () => {
-    accountCollection = MongoHelper.getCollection('products');
-    await accountCollection.deleteMany({});
+    productsCollection = MongoHelper.getCollection('products');
+    await productsCollection.deleteMany({});
   });
 
   afterAll(async () => {
@@ -31,7 +31,7 @@ describe('Product Mongo Repository', () => {
 
   it('should return an product on getProducts success', async () => {
     const sut = new ProductMongoRepository();
-    await accountCollection.insertOne(makeFakeProduct());
+    await productsCollection.insertOne(makeFakeProduct());
     const products = await sut.getProducts();
     expect(products).toEqual([
       { ...makeFakeProduct(), id: expect.any(String) },

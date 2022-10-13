@@ -1,4 +1,8 @@
-import SubscriptionModel from '../../models/subscription';
+import { ObjectId } from 'mongodb';
+
+export interface AddSubscriptionResult {
+  id: ObjectId;
+}
 
 export interface AddSubscriptionModel {
   email: string;
@@ -11,5 +15,5 @@ export interface AddSubscriptionModel {
 export default interface AddSubscription {
   add(
     subscription: Omit<AddSubscriptionModel, 'createdAt'>
-  ): Promise<SubscriptionModel>;
+  ): Promise<AddSubscriptionResult>;
 }
