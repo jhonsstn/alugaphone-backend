@@ -6,3 +6,7 @@ export interface EncrypterParams {
 export interface Encrypter {
   encrypt(tokenData: EncrypterParams): Promise<string>;
 }
+
+export interface Decrypter {
+  decrypt(token: string): Promise<EncrypterParams | null>;
+}
