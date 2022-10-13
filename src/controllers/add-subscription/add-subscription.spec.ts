@@ -19,6 +19,9 @@ import {
 import { HttpRequest } from '../interfaces/http';
 import AddSubscriptionController from './add-subscription';
 
+jest.useFakeTimers();
+jest.setSystemTime(new Date('2022-10-13'));
+
 const makeFakeSubscription = (): SubscriptionModel => ({
   id: 'valid_id',
   email: 'any_email@mail.com',
@@ -110,6 +113,15 @@ const makeSut = (): SutTypes => {
 };
 
 describe('AddSubscription Controller', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2022-10-13'));
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   it('should return 400 if no token is provided', async () => {
     const { sut } = makeSut();
     const httpRequest = makeFakeRequest();
