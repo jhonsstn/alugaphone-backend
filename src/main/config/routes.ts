@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import addSubscriptionRoute from '../routes/add-subscription/add-subscription';
 import productByIdRoute from '../routes/get-product-by-id/get-product-by-id';
 import productsRoute from '../routes/get-products/get-products';
 import signInRoute from '../routes/signin/signin-route';
@@ -11,4 +12,5 @@ export default (app: express.Application): void => {
   signInRoute(router);
   productsRoute(router);
   productByIdRoute(router);
+  addSubscriptionRoute(router);
 };
