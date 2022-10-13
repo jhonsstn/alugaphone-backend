@@ -24,15 +24,6 @@ import AddSubscriptionController from './add-subscription';
 jest.useFakeTimers();
 jest.setSystemTime(new Date('2022-10-13'));
 
-const makeFakeSubscription = (): SubscriptionModel => ({
-  id: 'valid_id',
-  email: 'any_email@mail.com',
-  document: 'any_document',
-  productId: 'any_product_id',
-  productCapacity: 1,
-  createdAt: new Date(),
-});
-
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     email: 'any_email@mail.com',
