@@ -1,6 +1,8 @@
+import { ObjectId } from 'mongodb';
 import SubscriptionModel from '../../models/subscription';
 import AddSubscription, {
   AddSubscriptionModel,
+  AddSubscriptionResult,
 } from '../../services/add-subscription/add-subscription-interface';
 import CPFValidator from '../../services/cpf-validator/cpf-validator-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
@@ -77,8 +79,10 @@ const makeCPFValidator = (): CPFValidator => {
 
 const makeAddSubscription = (): AddSubscription => {
   class AddSubscriptionStub implements AddSubscription {
-    async add(_subscription: AddSubscriptionModel): Promise<SubscriptionModel> {
-      return Promise.resolve(makeFakeSubscription());
+    async add(
+      _subscription: AddSubscriptionModel,
+    ): Promise<AddSubscriptionResult> {
+      return Promise.resolve({ id: new ObjectId('6348581743fbdc1e219f5171') });
     }
   }
   return new AddSubscriptionStub();
@@ -269,6 +273,8 @@ describe('AddSubscription Controller', () => {
     const { sut } = makeSut();
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(success(makeFakeSubscription()));
+    expect(httpResponse).toEqual(
+      success({ id: new ObjectId('6348581743fbdc1e219f5171') }),
+    );
   });
 });

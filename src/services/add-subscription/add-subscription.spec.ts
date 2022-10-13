@@ -1,7 +1,11 @@
+import { ObjectId } from 'mongodb';
 import SubscriptionModel from '../../models/subscription';
 import AddSubscriptionRepository from '../../repositories/add-subscription-repository';
 import DbAddSubscription from './add-subscription';
-import { AddSubscriptionModel } from './add-subscription-interface';
+import {
+  AddSubscriptionModel,
+  AddSubscriptionResult,
+} from './add-subscription-interface';
 
 const makeFakeAddSubscription = (): AddSubscriptionModel => ({
   email: 'any_email@mail.com',
@@ -22,8 +26,8 @@ const makeFakeSubscription = (): SubscriptionModel => ({
 
 const makeAddSubscriptionRepository = (): AddSubscriptionRepository => {
   class AddSubscriptionRepositoryStub implements AddSubscriptionRepository {
-    async add(_account: AddSubscriptionModel): Promise<SubscriptionModel> {
-      return Promise.resolve(makeFakeSubscription());
+    async add(_account: AddSubscriptionModel): Promise<AddSubscriptionResult> {
+      return Promise.resolve({ id: new ObjectId('6348581743fbdc1e219f5171') });
     }
   }
   return new AddSubscriptionRepositoryStub();
@@ -71,6 +75,8 @@ describe('DbAddSubscription', () => {
   it('should return an subscription on success', async () => {
     const { sut } = makeSut();
     const subscription = await sut.add(makeFakeAddSubscription());
-    expect(subscription).toEqual(makeFakeSubscription());
+    expect(subscription).toEqual({
+      id: new ObjectId('6348581743fbdc1e219f5171'),
+    });
   });
 });
