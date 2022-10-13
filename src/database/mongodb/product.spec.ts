@@ -5,7 +5,6 @@ import ProductMongoRepository from './product';
 let accountCollection: Collection;
 
 const makeFakeProduct = () => ({
-  id: 'any_id',
   name: 'any_name',
   prices: [
     {
@@ -30,10 +29,12 @@ describe('Product Mongo Repository', () => {
     await MongoHelper.disconnect();
   });
 
-  it('should return an product on GetProducts success', async () => {
+  it('should return an product on getProducts success', async () => {
     const sut = new ProductMongoRepository();
     await accountCollection.insertOne(makeFakeProduct());
     const products = await sut.getProducts();
-    expect(products).toEqual([makeFakeProduct()]);
+    expect(products).toEqual([
+      { ...makeFakeProduct(), id: expect.any(String) },
+    ]);
   });
 });
