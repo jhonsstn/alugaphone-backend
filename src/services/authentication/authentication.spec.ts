@@ -147,6 +147,13 @@ describe('Authentication', () => {
   it('should return an account on success', async () => {
     const { sut } = makeSut();
     const account = await sut.auth(makeFakeLoginData());
-    expect(account).toEqual('any_token');
+    expect(account).toEqual({
+      token: 'any_token',
+      user: {
+        id: 'valid_id',
+        name: 'valid_name',
+        email: 'valid_email@mail.com',
+      },
+    });
   });
 });

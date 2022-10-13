@@ -1,6 +1,7 @@
 import {
   Authentication,
   AuthenticationParams,
+  AuthenticationResult,
 } from '../../services/authentication/authentication-interface';
 import EmailValidator from '../../services/email-validator/email-validator-interface';
 import InvalidParamError from '../errors/invalid-param-error';
@@ -44,8 +45,11 @@ const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
     async auth(
       _authenticationParams: AuthenticationParams,
-    ): Promise<string | null> {
-      return Promise.resolve('any_token');
+    ): Promise<AuthenticationResult | null> {
+      return Promise.resolve({
+        token: 'any_token',
+        user: { id: 'any_id', name: 'any_name', email: 'any_email' },
+      });
     }
   }
   return new AuthenticationStub();
@@ -144,6 +148,11 @@ describe('Login Controller', () => {
     const { sut } = makeSut();
     const httpRequest: HttpRequest = makeFakeRequest();
     const httpResponse: HttpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(success({ token: 'any_token' }));
+    expect(httpResponse).toEqual(
+      success({
+        token: 'any_token',
+        user: { id: 'any_id', name: 'any_name', email: 'any_email' },
+      }),
+    );
   });
 });

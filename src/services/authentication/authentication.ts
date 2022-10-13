@@ -4,6 +4,7 @@ import { Encrypter } from '../jwt/jwt-encrypt-interface';
 import {
   Authentication,
   AuthenticationParams,
+  AuthenticationResult,
 } from './authentication-interface';
 
 export default class Authenticator implements Authentication {
@@ -15,7 +16,7 @@ export default class Authenticator implements Authentication {
 
   async auth(
     authenticationParams: AuthenticationParams,
-  ): Promise<string | null> {
+  ): Promise<AuthenticationResult | null> {
     const account = await this.getAccountByEmailRepository.getAccountByEmail(
       authenticationParams.email,
     );
@@ -29,7 +30,10 @@ export default class Authenticator implements Authentication {
           id: account.id,
           email: account.email,
         });
-        return token;
+        return {
+          token,
+          user: { id: account.id, name: account.name, email: account.email },
+        };
       }
     }
 

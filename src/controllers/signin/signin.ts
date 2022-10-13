@@ -32,11 +32,11 @@ export default class SignInController implements Controller {
         return badRequest(new InvalidParamError('email'));
       }
 
-      const token = await this.authentication.auth({ email, password });
-      if (!token) {
+      const authData = await this.authentication.auth({ email, password });
+      if (!authData) {
         return unauthorized();
       }
-      return success({ token });
+      return success({ token: authData.token, user: authData.user });
     } catch (error) {
       return serverError(error);
     }
