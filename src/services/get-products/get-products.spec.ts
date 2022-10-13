@@ -58,4 +58,13 @@ describe('DbGetProducts', () => {
     const products = await sut.get();
     expect(products).toBeNull();
   });
+
+  it('should throw if GetProductsRepository throws', async () => {
+    const { sut, GetProductsRepositoryStub } = makeSut();
+    jest
+      .spyOn(GetProductsRepositoryStub, 'getProducts')
+      .mockReturnValueOnce(Promise.reject(new Error()));
+    const promise = sut.get();
+    await expect(promise).rejects.toThrow();
+  });
 });
