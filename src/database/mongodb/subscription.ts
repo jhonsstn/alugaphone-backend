@@ -11,7 +11,7 @@ implements AddSubscriptionRepository {
   async add(
     subscription: AddSubscriptionModel,
   ): Promise<AddSubscriptionResult> {
-    const subscriptionCollection = MongoHelper.getCollection('products');
+    const subscriptionCollection = MongoHelper.getCollection('subscriptions');
     const { insertedId } = await subscriptionCollection.insertOne(subscription);
     return { id: insertedId };
   }
