@@ -1,4 +1,6 @@
+import SubscriptionModel from '../../models/subscription';
 import AddSubscriptionRepository from '../../repositories/add-subscription-repository';
+import GetSubscriptionsRepository from '../../repositories/get-subscriptions-repository';
 import {
   AddSubscriptionModel,
   AddSubscriptionResult,
@@ -7,7 +9,7 @@ import {
 import MongoHelper from '../helpers/mongo-helper';
 
 export default class SubscriptionMongoRepository
-implements AddSubscriptionRepository {
+implements AddSubscriptionRepository, GetSubscriptionsRepository {
   async add(
     subscription: AddSubscriptionModel,
   ): Promise<AddSubscriptionResult> {
@@ -16,7 +18,7 @@ implements AddSubscriptionRepository {
     return { id: insertedId };
   }
 
-  async getSubscriptions(): Promise<AddSubscriptionModel[]> {
+  async getSubscriptions(): Promise<SubscriptionModel[] | null> {
     const subscriptionCollection = MongoHelper.getCollection('subscriptions');
     const subscriptions = await subscriptionCollection.find().toArray();
     return subscriptions && subscriptions.map(MongoHelper.mapId);
