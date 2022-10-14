@@ -1,4 +1,5 @@
 import {
+  addSubscriptionPath,
   getProductByIdPath,
   getProductsPath,
   signInPath,
@@ -10,4 +11,5 @@ export default {
   '/accounts/signin': signInPath,
   '/products': getProductsPath,
   '/products/{productId}': getProductByIdPath,
+  '/subscriptions': addSubscriptionPath,
 };

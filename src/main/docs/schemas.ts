@@ -1,4 +1,6 @@
 import {
+  addSubscriptionParamsSchema,
+  addSubscriptionResponseSchema,
   getProductByIdResponseSchema,
   getProductsParamsSchema,
   getProductsResponseSchema,
@@ -14,4 +16,6 @@ export default {
   getProductsParamsSchema,
   getProductsResponseSchema,
   getProductByIdResponseSchema,
+  addSubscriptionParamsSchema,
+  addSubscriptionResponseSchema,
 };
