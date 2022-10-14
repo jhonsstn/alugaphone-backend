@@ -58,12 +58,12 @@ const makeAddAccount = (): AddAccount => {
   return new AddAccountStub();
 };
 
-type SutTypes = {
+interface SutTypes {
   sut: SignUpController;
   emailValidatorStub: EmailValidator;
   cpfValidatorStub: CPFValidator;
   addAccountStub: AddAccount;
-};
+}
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator();

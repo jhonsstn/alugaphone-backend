@@ -36,7 +36,7 @@ describe('Subscription Mongo Repository', () => {
   it('should return an array of subscriptions on getSubscriptions success', async () => {
     const sut = new SubscriptionMongoRepository();
     await subscriptionCollection.insertOne(makeFakeAddSubscription());
-    const products = await sut.getSubscriptions();
+    const products = await sut.getSubscriptions('any_email@mail.com');
     expect(products).toEqual([
       {
         ...makeFakeAddSubscription(),

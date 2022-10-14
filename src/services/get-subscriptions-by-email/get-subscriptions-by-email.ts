@@ -1,10 +1,11 @@
 import SubscriptionModel from '../../models/subscription';
-import GetSubscriptionsRepository from '../../repositories/get-subscriptions-repository';
+import GetSubscriptionsByEmailRepository from '../../repositories/get-subscriptions-by-email-repository';
 import GetSubscriptionsByEmail from './get-subscriptions-by-email-interface';
 
-export default class DbGetSubscriptions implements GetSubscriptionsByEmail {
+export default class DbGetSubscriptionsByEmail
+implements GetSubscriptionsByEmail {
   constructor(
-    private readonly subscriptionRepository: GetSubscriptionsRepository,
+    private readonly subscriptionRepository: GetSubscriptionsByEmailRepository,
   ) {}
 
   async get(email: string): Promise<SubscriptionModel[] | null> {

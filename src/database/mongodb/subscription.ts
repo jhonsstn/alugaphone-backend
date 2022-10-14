@@ -1,6 +1,6 @@
 import SubscriptionModel from '../../models/subscription';
 import AddSubscriptionRepository from '../../repositories/add-subscription-repository';
-import GetSubscriptionsRepository from '../../repositories/get-subscriptions-repository';
+import GetSubscriptionsByEmailRepository from '../../repositories/get-subscriptions-by-email-repository';
 import {
   AddSubscriptionModel,
   AddSubscriptionResult,
@@ -9,7 +9,7 @@ import {
 import MongoHelper from '../helpers/mongo-helper';
 
 export default class SubscriptionMongoRepository
-implements AddSubscriptionRepository, GetSubscriptionsRepository {
+implements AddSubscriptionRepository, GetSubscriptionsByEmailRepository {
   async add(
     subscription: AddSubscriptionModel,
   ): Promise<AddSubscriptionResult> {
