@@ -15,15 +15,6 @@ const makeFakeAddSubscription = (): AddSubscriptionModel => ({
   createdAt: new Date(),
 });
 
-const makeFakeSubscription = (): SubscriptionModel => ({
-  id: 'any_id',
-  email: 'any_email@mail.com',
-  document: 'any_document',
-  productId: 'any_product_id',
-  productCapacity: 1,
-  createdAt: new Date(),
-});
-
 const makeAddSubscriptionRepository = (): AddSubscriptionRepository => {
   class AddSubscriptionRepositoryStub implements AddSubscriptionRepository {
     async add(_account: AddSubscriptionModel): Promise<AddSubscriptionResult> {
