@@ -15,4 +15,10 @@ implements AddSubscriptionRepository {
     const { insertedId } = await subscriptionCollection.insertOne(subscription);
     return { id: insertedId };
   }
+
+  async getSubscriptions(): Promise<AddSubscriptionModel[]> {
+    const subscriptionCollection = MongoHelper.getCollection('subscriptions');
+    const subscriptions = await subscriptionCollection.find().toArray();
+    return subscriptions && subscriptions.map(MongoHelper.mapId);
+  }
 }

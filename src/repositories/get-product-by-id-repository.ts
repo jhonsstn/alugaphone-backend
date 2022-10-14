@@ -1,5 +1,6 @@
+import { ObjectId } from 'mongodb';
 import ProductModel from '../models/product';
 
 export default interface GetProductByIdRepository {
-  getById(id: string): Promise<ProductModel | null>;
+  getById(id: ObjectId): Promise<ProductModel | null>;
 }

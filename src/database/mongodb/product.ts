@@ -12,7 +12,7 @@ implements GetProductsRepository, GetProductByIdRepository {
     return products && products.map((product) => MongoHelper.mapId(product));
   }
 
-  async getById(id: string): Promise<any> {
+  async getById(id: ObjectId): Promise<ProductModel> {
     const productCollection = MongoHelper.getCollection('products');
     const product = await productCollection.findOne({
       _id: new ObjectId(id),

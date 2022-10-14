@@ -1,4 +1,4 @@
-import { Collection } from 'mongodb';
+import { Collection, ObjectId } from 'mongodb';
 import MongoHelper from '../helpers/mongo-helper';
 import ProductMongoRepository from './product';
 
@@ -29,12 +29,21 @@ describe('Product Mongo Repository', () => {
     await MongoHelper.disconnect();
   });
 
-  it('should return an product on getProducts success', async () => {
+  it('should return an array of products on getProducts success', async () => {
     const sut = new ProductMongoRepository();
     await productsCollection.insertOne(makeFakeProduct());
     const products = await sut.getProducts();
     expect(products).toEqual([
       { ...makeFakeProduct(), id: expect.any(String) },
     ]);
+  });
+
+  it('should return a product on getById success', async () => {
+    const sut = new ProductMongoRepository();
+    const { insertedId } = await productsCollection.insertOne(
+      makeFakeProduct(),
+    );
+    const products = await sut.getById(new ObjectId(insertedId));
+    expect(products).toEqual({ ...makeFakeProduct(), id: expect.any(String) });
   });
 });

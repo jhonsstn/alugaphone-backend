@@ -28,7 +28,7 @@ export default class GetSubscriptionsController {
       }
       const subscriptions = await this.getSubscription.get();
 
-      return subscriptions.length ? success(subscriptions) : noContent();
+      return subscriptions ? success(subscriptions) : noContent();
     } catch (error) {
       return serverError(error);
     }

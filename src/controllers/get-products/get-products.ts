@@ -9,7 +9,7 @@ export default class GetProductsController implements Controller {
   async handle(): Promise<HttpResponse> {
     try {
       const products = await this.getProducts.get();
-      return products.length ? success(products) : noContent();
+      return products ? success(products) : noContent();
     } catch (error) {
       return serverError(error);
     }
