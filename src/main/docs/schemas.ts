@@ -4,6 +4,7 @@ import {
   getProductByIdResponseSchema,
   getProductsParamsSchema,
   getProductsResponseSchema,
+  getSubscriptionsByEmailResponseSchema,
   signInParamsSchema,
   signInResponseSchema,
   signUpParamsSchema,
@@ -18,4 +19,5 @@ export default {
   getProductByIdResponseSchema,
   addSubscriptionParamsSchema,
   addSubscriptionResponseSchema,
+  getSubscriptionsByEmailResponseSchema,
 };

@@ -2,6 +2,7 @@ import {
   addSubscriptionPath,
   getProductByIdPath,
   getProductsPath,
+  getSubscriptionByEmailPath,
   signInPath,
   signUpPath,
 } from './paths/index';
@@ -12,4 +13,5 @@ export default {
   '/products': getProductsPath,
   '/products/{productId}': getProductByIdPath,
   '/subscriptions': addSubscriptionPath,
+  '/subscriptions/token': getSubscriptionByEmailPath,
 };
