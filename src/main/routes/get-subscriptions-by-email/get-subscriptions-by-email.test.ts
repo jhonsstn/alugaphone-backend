@@ -52,7 +52,7 @@ describe('GetSubscriptionsByEmail Route', () => {
       });
 
     await request(app)
-      .get('/api/subscriptions')
+      .get('/api/subscriptions/token')
       .set('authorization', token)
       .expect(200);
   });

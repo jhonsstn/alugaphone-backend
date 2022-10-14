@@ -4,7 +4,7 @@ import makeGetSubscriptionsByEmailController from '../../factories/get-subscript
 
 export default (router: Router): void => {
   router.get(
-    '/subscriptions',
+    '/subscriptions/token',
     adaptRoute(makeGetSubscriptionsByEmailController()),
   );
 };
