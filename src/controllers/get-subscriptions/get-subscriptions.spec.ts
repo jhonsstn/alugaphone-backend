@@ -5,7 +5,13 @@ import {
   EncrypterParams,
 } from '../../services/jwt/jwt-encrypt-interface';
 import MissingParamError from '../errors/missing-param-error';
-import { badRequest, success, unauthorized } from '../helpers/http';
+import {
+  badRequest,
+  noContent,
+  serverError,
+  success,
+  unauthorized,
+} from '../helpers/http';
 import { HttpRequest } from '../interfaces/http';
 import GetSubscriptionsController from './get-subscriptions';
 
@@ -107,5 +113,26 @@ describe('GetSubscriptions Controller', () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(makeFakeRequest());
     expect(httpResponse).toEqual(success([makeFakeSubscription()]));
+  });
+
+  it('should return 500 if GetSubscriptions throws', async () => {
+    const { sut, getSubscriptionsStub } = makeSut();
+    jest.spyOn(getSubscriptionsStub, 'get').mockRejectedValueOnce(new Error());
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  it('should return 500 if Decrypter throws', async () => {
+    const { sut, decrypterStub } = makeSut();
+    jest.spyOn(decrypterStub, 'decrypt').mockRejectedValueOnce(new Error());
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  it('should return 204 if GetSubscriptions returns null', async () => {
+    const { sut, getSubscriptionsStub } = makeSut();
+    jest.spyOn(getSubscriptionsStub, 'get').mockResolvedValueOnce(null);
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(noContent());
   });
 });

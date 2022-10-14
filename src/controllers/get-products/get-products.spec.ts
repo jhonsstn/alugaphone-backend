@@ -61,9 +61,9 @@ describe('GetProducts Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
-  it('should return 204 if GetProducts returns an empty array', async () => {
+  it('should return 204 if GetProducts returns null', async () => {
     const { sut, getProductsStub } = makeSut();
-    jest.spyOn(getProductsStub, 'get').mockReturnValueOnce(Promise.resolve([]));
+    jest.spyOn(getProductsStub, 'get').mockResolvedValueOnce(null);
     const httpResponse = await sut.handle();
     expect(httpResponse).toEqual(noContent());
   });

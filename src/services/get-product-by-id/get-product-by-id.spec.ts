@@ -1,8 +1,9 @@
+import { ObjectId } from 'mongodb';
 import GetProductByIdRepository from '../../repositories/get-product-by-id-repository';
 import DbGetProductById from './get-product-by-id';
 
 const makeFakeProduct = () => ({
-  id: 'any_id',
+  id: '6348663138e2f49d48a6cc37',
   name: 'any_name',
   prices: [
     {
@@ -15,7 +16,7 @@ const makeFakeProduct = () => ({
 
 const makeGetProductByIdRepository = () => {
   class GetProductByIdRepositoryStub implements GetProductByIdRepository {
-    async getById(id: string): Promise<any> {
+    async getById(id: ObjectId): Promise<any> {
       return Promise.resolve(makeFakeProduct());
     }
   }
@@ -40,13 +41,13 @@ describe('DbGetProductById', () => {
   it('should call GetProductByIdRepository', async () => {
     const { sut, getProductByIdRepositoryStub } = makeSut();
     const getByIdSpy = jest.spyOn(getProductByIdRepositoryStub, 'getById');
-    await sut.getById('any_id');
-    expect(getByIdSpy).toHaveBeenCalledWith('any_id');
+    await sut.getById('6348663138e2f49d48a6cc37');
+    expect(getByIdSpy).toHaveBeenCalledWith(expect.any(ObjectId));
   });
 
   it('should return a product on success', async () => {
     const { sut } = makeSut();
-    const product = await sut.getById('any_id');
+    const product = await sut.getById('6348663138e2f49d48a6cc37');
     expect(product).toEqual(makeFakeProduct());
   });
 
@@ -55,7 +56,7 @@ describe('DbGetProductById', () => {
     jest
       .spyOn(getProductByIdRepositoryStub, 'getById')
       .mockReturnValueOnce(Promise.resolve(null));
-    const product = await sut.getById('any_id');
+    const product = await sut.getById('6348663138e2f49d48a6cc37');
     expect(product).toBeNull();
   });
 
@@ -63,8 +64,8 @@ describe('DbGetProductById', () => {
     const { sut, getProductByIdRepositoryStub } = makeSut();
     jest
       .spyOn(getProductByIdRepositoryStub, 'getById')
-      .mockReturnValueOnce(Promise.reject(new Error()));
-    const promise = sut.getById('any_id');
+      .mockRejectedValueOnce(new Error());
+    const promise = sut.getById('6348663138e2f49d48a6cc37');
     await expect(promise).rejects.toThrow();
   });
 });

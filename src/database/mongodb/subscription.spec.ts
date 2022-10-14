@@ -27,9 +27,22 @@ describe('Subscription Mongo Repository', () => {
     await MongoHelper.disconnect();
   });
 
-  it('should return an subscription on add success', async () => {
+  it('should return an id on add success', async () => {
     const sut = new SubscriptionMongoRepository();
     const products = await sut.add(makeFakeAddSubscription());
     expect(products).toStrictEqual({ id: expect.any(ObjectId) });
+  });
+
+  it('should return an array of subscriptions on getSubscriptions success', async () => {
+    const sut = new SubscriptionMongoRepository();
+    await subscriptionCollection.insertOne(makeFakeAddSubscription());
+    const products = await sut.getSubscriptions();
+    expect(products).toEqual([
+      {
+        ...makeFakeAddSubscription(),
+        id: expect.any(String),
+        createdAt: expect.any(Date),
+      },
+    ]);
   });
 });
