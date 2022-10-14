@@ -1,10 +1,9 @@
-import { cpf } from 'cpf-cnpj-validator';
 import { Collection } from 'mongodb';
 import request from 'supertest';
 import MongoHelper from '../../../database/helpers/mongo-helper';
 import app from '../../config/app';
 
-let accountCollection: Collection;
+let productsCollection: Collection;
 
 const makeFakeProduct = () => ({
   id: 'any_id',
@@ -18,22 +17,22 @@ const makeFakeProduct = () => ({
   imageUrl: 'any_image_url',
 });
 
-describe('SignUp Routes', () => {
+describe('GetProducts Route', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string);
   });
 
   beforeEach(async () => {
-    accountCollection = MongoHelper.getCollection('products');
-    await accountCollection.deleteMany({});
+    productsCollection = MongoHelper.getCollection('products');
+    await productsCollection.deleteMany({});
   });
 
   afterAll(async () => {
     await MongoHelper.disconnect();
   });
 
-  it('should return an account on success', async () => {
-    await accountCollection.insertOne(makeFakeProduct());
+  it('should return an product array on success', async () => {
+    await productsCollection.insertOne(makeFakeProduct());
     await request(app).get('/api/products').expect(200);
   });
 });

@@ -3,7 +3,7 @@ import request from 'supertest';
 import MongoHelper from '../../../database/helpers/mongo-helper';
 import app from '../../config/app';
 
-describe('SignUp Routes', () => {
+describe('SignUp Route', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string);
   });

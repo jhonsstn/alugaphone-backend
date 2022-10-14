@@ -6,7 +6,7 @@ import app from '../../config/app';
 
 let accountCollection: Collection;
 
-describe('SignUp Routes', () => {
+describe('SignIp Route', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string);
   });
@@ -20,7 +20,7 @@ describe('SignUp Routes', () => {
     await MongoHelper.disconnect();
   });
 
-  it('should return an account on success', async () => {
+  it('should return a token on success', async () => {
     await request(app)
       .post('/api/accounts/signup')
       .send({

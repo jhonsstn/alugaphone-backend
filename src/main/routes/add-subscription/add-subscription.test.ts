@@ -8,7 +8,7 @@ let accountCollection: Collection;
 
 let token: string;
 
-describe('SignUp Routes', () => {
+describe('AddSubscription Route', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string);
   });
