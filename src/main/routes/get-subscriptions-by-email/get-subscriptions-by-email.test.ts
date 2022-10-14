@@ -9,16 +9,7 @@ let subscriptionCollection: Collection;
 
 let token: string;
 
-const makeFakeSubscription = (): SubscriptionModel => ({
-  id: 'any_id',
-  email: 'any_email@mail.com',
-  document: 'any_document',
-  productId: 'any_product_id',
-  productCapacity: 1,
-  createdAt: new Date(),
-});
-
-describe('GetSubscriptions Route', () => {
+describe('GetSubscriptionsByEmail Route', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string);
   });

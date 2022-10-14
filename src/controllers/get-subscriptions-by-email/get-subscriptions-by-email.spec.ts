@@ -1,5 +1,5 @@
 import SubscriptionModel from '../../models/subscription';
-import GetSubscriptions from '../../services/get-subscriptions/get-subscriptions-interface';
+import GetSubscriptionsByEmail from '../../services/get-subscriptions-by-email/get-subscriptions-by-email-interface';
 import {
   Decrypter,
   EncrypterParams,
@@ -13,7 +13,7 @@ import {
   unauthorized,
 } from '../helpers/http';
 import { HttpRequest } from '../interfaces/http';
-import GetSubscriptionsController from './get-subscriptions';
+import GetSubscriptionsController from './get-subscriptions-by-email';
 
 const makeFakeSubscription = (): SubscriptionModel => ({
   id: 'any_id',
@@ -30,8 +30,8 @@ const makeFakeRequest = (): HttpRequest => ({
   },
 });
 
-const makeGetSubscriptions = (): GetSubscriptions => {
-  class GetSubscriptionsStub implements GetSubscriptions {
+const makeGetSubscriptions = (): GetSubscriptionsByEmail => {
+  class GetSubscriptionsStub implements GetSubscriptionsByEmail {
     async get(): Promise<SubscriptionModel[]> {
       return Promise.resolve([makeFakeSubscription()]);
     }
@@ -53,7 +53,7 @@ const makeDecrypter = (): Decrypter => {
 
 interface SutTypes {
   sut: GetSubscriptionsController;
-  getSubscriptionsStub: GetSubscriptions;
+  getSubscriptionsStub: GetSubscriptionsByEmail;
   decrypterStub: Decrypter;
 }
 
@@ -71,7 +71,7 @@ const makeSut = (): SutTypes => {
   };
 };
 
-describe('GetSubscriptions Controller', () => {
+describe('GetSubscriptionsByEmail Controller', () => {
   beforeAll(() => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2022-10-13'));
@@ -102,20 +102,20 @@ describe('GetSubscriptions Controller', () => {
     expect(httpResponse).toEqual(unauthorized());
   });
 
-  it('should call GetSubscriptions', async () => {
+  it('should call GetSubscriptionsByEmail with correct value', async () => {
     const { sut, getSubscriptionsStub } = makeSut();
     const getSpy = jest.spyOn(getSubscriptionsStub, 'get');
     await sut.handle(makeFakeRequest());
-    expect(getSpy).toHaveBeenCalledTimes(1);
+    expect(getSpy).toHaveBeenCalledWith('any_email@mail.com');
   });
 
-  it('should return 200 if GetSubscriptions returns subscriptions', async () => {
+  it('should return 200 if GetSubscriptionsByEmail returns subscriptions', async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(makeFakeRequest());
     expect(httpResponse).toEqual(success([makeFakeSubscription()]));
   });
 
-  it('should return 500 if GetSubscriptions throws', async () => {
+  it('should return 500 if GetSubscriptionsByEmail throws', async () => {
     const { sut, getSubscriptionsStub } = makeSut();
     jest.spyOn(getSubscriptionsStub, 'get').mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(makeFakeRequest());
@@ -129,7 +129,7 @@ describe('GetSubscriptions Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
-  it('should return 204 if GetSubscriptions returns null', async () => {
+  it('should return 204 if GetSubscriptionsByEmail returns null', async () => {
     const { sut, getSubscriptionsStub } = makeSut();
     jest.spyOn(getSubscriptionsStub, 'get').mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(makeFakeRequest());

@@ -18,9 +18,11 @@ implements AddSubscriptionRepository, GetSubscriptionsRepository {
     return { id: insertedId };
   }
 
-  async getSubscriptions(): Promise<SubscriptionModel[] | null> {
+  async getSubscriptions(email: string): Promise<SubscriptionModel[] | null> {
     const subscriptionCollection = MongoHelper.getCollection('subscriptions');
-    const subscriptions = await subscriptionCollection.find().toArray();
+    const subscriptions = await subscriptionCollection
+      .find({ email })
+      .toArray();
     return subscriptions && subscriptions.map(MongoHelper.mapId);
   }
 }

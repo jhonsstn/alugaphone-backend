@@ -1,4 +1,4 @@
-import GetSubscriptions from '../../services/get-subscriptions/get-subscriptions-interface';
+import GetSubscriptionsByEmail from '../../services/get-subscriptions-by-email/get-subscriptions-by-email-interface';
 import { Decrypter } from '../../services/jwt/jwt-encrypt-interface';
 import MissingParamError from '../errors/missing-param-error';
 import {
@@ -12,7 +12,7 @@ import { HttpRequest, HttpResponse } from '../interfaces/http';
 
 export default class GetSubscriptionsController {
   constructor(
-    private readonly getSubscription: GetSubscriptions,
+    private readonly getSubscriptionsByEmail: GetSubscriptionsByEmail,
     private readonly decrypter: Decrypter,
   ) {}
 
@@ -26,7 +26,9 @@ export default class GetSubscriptionsController {
       if (!tokenData) {
         return unauthorized();
       }
-      const subscriptions = await this.getSubscription.get();
+      const subscriptions = await this.getSubscriptionsByEmail.get(
+        tokenData.email,
+      );
 
       return subscriptions ? success(subscriptions) : noContent();
     } catch (error) {
